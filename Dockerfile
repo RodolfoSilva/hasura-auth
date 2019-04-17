@@ -1,5 +1,7 @@
 FROM node:dubnium-alpine
 
+MAINTAINER Rodolfo Silva
+
 WORKDIR /app
 
 COPY package.json yarn.lock ./
