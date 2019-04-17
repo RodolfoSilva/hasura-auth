@@ -78,6 +78,13 @@ In "Headers for the remote GraphQL server" select the option "Forward all header
 | `JWT_PRIVATE_KEY`               | `secretkey`                                   | JWT Secret key used to generate token |
 | `JWT_TOKEN_EXPIRES`             | `15`                                          | Life time in minutes of JWT           |
 
+## Todo
+
+* [ ] Google Login
+* [ ] Facebook Login
+* [ ] Google Login
+* [ ] Twitter Login
+
 ## License
 
 MIT
