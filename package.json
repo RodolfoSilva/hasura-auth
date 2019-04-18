@@ -7,7 +7,7 @@
     "start": "node ./build/index.js",
     "start:dev": "cross-env DEBUG=App* NODE_ENV=development nodemon -L -e ts,graphql -x ts-node src/index.ts",
     "build": "cross-env NODE_ENV=production rimraf build && tsc",
-    "prepublish": "yarn run lint && yarn run test && yarn run build",
+    "prepublish": "in-publish && yarn run lint && yarn run test && yarn run build || not-in-publish",
     "test": "jest --ci",
     "lint": "tslint -p tsconfig.json"
   },
@@ -43,6 +43,7 @@
     "@types/jsonwebtoken": "^8.3.2",
     "@types/node": "^11.13.4",
     "cross-env": "^5.2.0",
+    "in-publish": "^2.0.0",
     "jest": "^24.7.1",
     "prettier": "^1.17.0",
     "rimraf": "^2.6.3",
