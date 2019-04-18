@@ -15,7 +15,7 @@ export const createUserAccount = async (
   const user: User | undefined = await getUserByEmail(email);
 
   if (user) {
-    throw new Error('The "email" is already exist');
+    throw new Error('Email already registered');
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
