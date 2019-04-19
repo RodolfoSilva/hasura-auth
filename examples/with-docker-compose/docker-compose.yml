@@ -1,20 +1,28 @@
+
 version: '3.6'
 services:
   postgres:
-    image: postgres
+    image: postgres:10.5
     restart: always
     volumes:
       - db_data:/var/lib/postgresql/data
   graphql-engine:
-    image: hasura/graphql-engine:v1.0.0-alpha44
+    image: hasura/graphql-engine:v1.0.0-alpha44.cli-migrations
     depends_on:
       - "postgres"
     restart: always
     environment:
+      # database url to connect
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@postgres:5432/postgres
-      HASURA_GRAPHQL_AUTH_HOOK: http://hasura-auth:4000/hook
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
-      HASURA_GRAPHQL_ADMIN_SECRET: secretmasterkey # change this with your strong password
+      # enable the console served by server
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set "false" to disable console
+      ## uncomment next line to set an admin secret key
+      # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+    command:
+      - graphql-engine
+      - serve
+    volumes:
+      - ./migrations:/hasura-migrations
   hasura-auth:
     image: rodolfosilva/hasura-auth:0.0.4
     depends_on:
@@ -24,10 +32,11 @@ services:
       HASURA_GRAPHQL_ENDPOINT: http://graphql-engine:8080/v1alpha1/graphql
       HASURA_GRAPHQL_ADMIN_SECRET: secretmasterkey # change this with your strong password
       JWT_ALGORITHM: HS256
+      # change the jwt private key
       JWT_PRIVATE_KEY: cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e
       REFETCH_TOKEN_EXPIRES: 54000
   caddy:
-    image: abiosoft/caddy:0.11.0
+    image: abiosoft/caddy:0.11.5
     depends_on:
       - "graphql-engine"
       - "hasura-auth"
