@@ -1,0 +1,44 @@
+version: '3.6'
+services:
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  graphql-engine:
+    image: hasura/graphql-engine:v1.0.0-alpha44
+    depends_on:
+      - "postgres"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@postgres:5432/postgres
+      HASURA_GRAPHQL_AUTH_HOOK: http://hasura-auth:4000/hook
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_ADMIN_SECRET: secretmasterkey # change this with your strong password
+  hasura-auth:
+    image: rodolfosilva/hasura-auth:0.0.4
+    depends_on:
+      - "graphql-engine"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_ENDPOINT: http://graphql-engine:8080/v1alpha1/graphql
+      HASURA_GRAPHQL_ADMIN_SECRET: secretmasterkey # change this with your strong password
+      JWT_ALGORITHM: HS256
+      JWT_PRIVATE_KEY: cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e
+      REFETCH_TOKEN_EXPIRES: 54000
+  caddy:
+    image: abiosoft/caddy:0.11.0
+    depends_on:
+      - "graphql-engine"
+      - "hasura-auth"
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2015:2015"
+    volumes:
+      - ./Caddyfile:/etc/Caddyfile
+      - caddy_certs:/root/.caddy
+volumes:
+  db_data:
+  caddy_certs:
