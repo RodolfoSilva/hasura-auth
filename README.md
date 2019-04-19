@@ -82,7 +82,6 @@ In "Headers for the remote GraphQL server" select the option "Forward all header
 
 * [ ] Google Login
 * [ ] Facebook Login
-* [ ] Google Login
 * [ ] Twitter Login
 
 ## License
