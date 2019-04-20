@@ -33,7 +33,7 @@ export const createUserAccount = async (
     `,
     {
       user: {
-        email,
+        email: email.toLowerCase(),
         password: passwordHash,
         secret_token: uuidv4(),
         is_active: userRegistrationAutoActive,

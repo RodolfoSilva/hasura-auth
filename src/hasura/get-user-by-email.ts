@@ -19,7 +19,7 @@ export const getUserByEmail = async (
       `,
       {
         where: {
-          email: { _eq: email },
+          email: { _eq: email.toLowerCase() },
         },
       },
     );
