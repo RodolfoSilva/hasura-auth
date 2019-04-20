@@ -1,6 +1,6 @@
 {
   "name": "hasura-auth",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Simple auth for HASURA",
   "main": "./build/index.js",
   "scripts": {
