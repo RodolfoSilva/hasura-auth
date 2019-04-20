@@ -13,6 +13,7 @@ export const generateJwtToken = (user: User) => {
     [vars.hasuraGraphqlClaimsKey]: {
       [`${vars.hasuraHeaderPrefix}allowed-roles`]: userRoles.join(','),
       [`${vars.hasuraHeaderPrefix}default-role`]: user.default_role,
+      [`${vars.hasuraHeaderPrefix}role`]: user.default_role,
       [`${vars.hasuraHeaderPrefix}user-id`]: user.id.toString(),
     },
   };
