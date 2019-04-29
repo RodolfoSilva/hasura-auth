@@ -16,8 +16,9 @@ services:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@postgres:5432/postgres
       # enable the console served by server
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set "false" to disable console
+      HASURA_GRAPHQL_AUTH_HOOK: http://hasura-auth:4000/hook
       ## uncomment next line to set an admin secret key
-      # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+      HASURA_GRAPHQL_ADMIN_SECRET: secretmasterkey
     command:
       - graphql-engine
       - serve
