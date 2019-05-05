@@ -21,7 +21,5 @@ export const updateUser = async (where: any, payload: any) => {
     },
   );
 
-  console.log(result);
-
   return result.data.update_users;
 };

@@ -1,4 +1,4 @@
 - args:
     cascade: true
-    sql: DROP TABLE IF EXISTS "public"."refresh_tokens", "public"."user_roles", "public"."users", "public"."roles" CASCADE;
+    sql: DROP TABLE IF EXISTS "public"."user", "public"."user_session" CASCADE;
   type: run_sql

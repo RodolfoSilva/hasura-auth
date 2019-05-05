@@ -6,40 +6,25 @@ Inspired by the [hasura-backend-plus](https://github.com/elitan/hasura-backend-p
 
 Create tables and initial state for your user management.
 ```sql
-CREATE TABLE roles (
-  name text NOT NULL PRIMARY KEY
-);
-
-INSERT INTO roles (name) VALUES ('admin');
-INSERT INTO roles (name) VALUES ('user');
-
-CREATE TABLE users (
+CREATE TABLE "user" (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  email text NOT NULL UNIQUE,
+  email citext NOT NULL UNIQUE,
   password text NOT NULL,
+  role text NOT NULL DEFAULT 'user',
   is_active boolean NOT NULL DEFAULT false,
   secret_token uuid NOT NULL,
-  default_role text NOT NULL DEFAULT 'user',
   created_at timestamp with time zone NOT NULL DEFAULT now(),
-  FOREIGN KEY (default_role) REFERENCES roles (name)
-);
+  updated_at timestamp with time zone NOT NULL DEFAULT now()
+); 
 
-CREATE TABLE user_roles (
+CREATE TABLE "user_session" (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL,
-  role text NOT NULL,
-  created_at timestamp with time zone NOT NULL DEFAULT now(),
-  FOREIGN KEY (user_id) REFERENCES users (id),
-  FOREIGN KEY (role) REFERENCES roles (name),
-  UNIQUE (user_id, role)
-);
-
-CREATE TABLE refresh_tokens (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  refresh_token uuid NOT NULL UNIQUE,
+  user_agent text NULL,
+  ip_address text NULL,
   user_id uuid NOT NULL,
   expires_at timestamp with time zone NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
   FOREIGN KEY (user_id) REFERENCES users (id)
 );
 ```

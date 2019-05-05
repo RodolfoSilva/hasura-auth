@@ -11,8 +11,8 @@ export const getUserByIdAndRefreshToken = async (
   const result = await hasuraQuery(
     gql`
       ${USER_FRAGMENT}
-      query($where: refresh_tokens_bool_exp) {
-        refresh_tokens(where: $where) {
+      query($where: user_session_bool_exp) {
+        user_session(where: $where) {
           user {
             ...UserParts
           }
@@ -29,7 +29,7 @@ export const getUserByIdAndRefreshToken = async (
     },
   );
 
-  const user: User = getIn(result, 'data.refresh_tokens[0].user');
+  const user: User = getIn(result, 'data.user_session[0].user');
 
   if (user === null || user === undefined) {
     throw new Error("Invalid 'refresh_token' or 'user_id'");

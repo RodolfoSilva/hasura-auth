@@ -7,7 +7,7 @@ import * as vars from './vars';
 import { generateJwtToken } from './auth-tools';
 import {
   User,
-  createRefreshToken,
+  createUserSession,
   createUserAccount,
   getUserById,
   changeUserPassword,
@@ -35,11 +35,13 @@ const checkUserIsPartOfStaffOrIsTheCurrentUser = (
   if (getIntersection(roles, ['admin']).length >= 1) {
     return true;
   }
+
   const { authorization } = req.headers;
 
   if (authorization === undefined) {
     return false;
   }
+
   try {
     const verifiedToken: any = jwt.verify(
       authorization.replace('Bearer ', ''),
@@ -89,7 +91,7 @@ const resolvers = {
 
       const accessToken = generateJwtToken(user);
 
-      const refreshToken = await createRefreshToken(user);
+      const refreshToken = await createUserSession(user);
 
       return {
         accessToken,

@@ -21,16 +21,24 @@ export const createApp = (): Application => {
   });
 
   app.get('/hook', (request, response) => {
-    const token = request.get('Authorization');
+    const unauthorizedResponseBody = {
+      [`${vars.hasuraHeaderPrefix}role`]: 'anonymous',
+    };
 
-    if (!token) {
-      response.json({ [`${vars.hasuraHeaderPrefix}role`]: 'anonymous' });
-      return;
+    try {
+      const token = request.get('Authorization');
+
+      if (!token) {
+        response.json(unauthorizedResponseBody);
+        return;
+      }
+
+      const payload: any = jwt.verify(token.split(' ')[1], vars.jwtSecretKey);
+
+      response.json(payload[vars.hasuraGraphqlClaimsKey]);
+    } catch (e) {
+      response.json(unauthorizedResponseBody);
     }
-
-    const payload: any = jwt.verify(token.split(' ')[1], vars.jwtSecretKey);
-
-    response.json(payload[vars.hasuraGraphqlClaimsKey]);
   });
 
   return app;

@@ -1,9 +1,8 @@
 export { User } from './user-type';
-export { Role } from './role-type';
 export { getUserById } from './get-user-by-id';
 export { getUserByEmail } from './get-user-by-email';
 export { getUserByCredentials } from './get-user-by-credentials';
-export { createRefreshToken } from './create-refresh-token';
+export { createUserSession } from './create-user-session';
 export { createUserAccount } from './create-user-account';
 export { updateUser } from './update-user';
 export { changeUserPassword } from './change-user-password';
