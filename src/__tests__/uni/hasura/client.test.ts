@@ -15,7 +15,7 @@ const { Response } = jest.requireActual('node-fetch');
 test('createUser calls fetch with the right args and returns the user id', async () => {
   const serverResponse = {
     data: {
-      users: [
+      user: [
         {
           id: 'c108cf04-0971-47b1-a86a-3a4fcdbf624a',
           name: 'John Wick',
@@ -30,7 +30,7 @@ test('createUser calls fetch with the right args and returns the user id', async
 
   const USER_QUERY = gql`
     query($name: String!) {
-      users(name: $name) {
+      user(name: $name) {
         id
         name
       }

@@ -12,7 +12,7 @@ export const getUserByEmail = async (
       gql`
         ${USER_FRAGMENT}
         query($where: user_bool_exp) {
-          users(where: $where) {
+          user(where: $where) {
             ...UserParts
           }
         }
@@ -24,7 +24,7 @@ export const getUserByEmail = async (
       },
     );
 
-    return getIn(response, 'data.users[0]');
+    return getIn(response, 'data.user[0]');
   } catch (e) {
     throw new Error('Unable to find the email');
   }
