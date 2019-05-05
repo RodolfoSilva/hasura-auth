@@ -23,8 +23,8 @@ export const createUserAccount = async (
   const result = await hasuraQuery(
     gql`
       ${USER_FRAGMENT}
-      mutation($user: users_insert_input!) {
-        insert_users(objects: [$user]) {
+      mutation($user: user_insert_input!) {
+        insert_user(objects: [$user]) {
           returning {
             ...UserParts
           }
@@ -41,5 +41,5 @@ export const createUserAccount = async (
     },
   );
 
-  return getIn(result, 'data.insert_users.returning') as User;
+  return getIn(result, 'data.insert_user.returning') as User;
 };

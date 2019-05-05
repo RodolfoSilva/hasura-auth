@@ -6,8 +6,8 @@ export const updateUser = async (where: any, payload: any) => {
   const result = await hasuraQuery(
     gql`
       ${USER_FRAGMENT}
-      mutation($where: users_bool_exp!, $set: users_set_input!) {
-        update_users(where: $where, _set: $set) {
+      mutation($where: user_bool_exp!, $set: user_set_input!) {
+        update_user(where: $where, _set: $set) {
           affected_rows
           returning {
             ...UserParts
@@ -21,5 +21,5 @@ export const updateUser = async (where: any, payload: any) => {
     },
   );
 
-  return result.data.update_users;
+  return result.data.update_user;
 };

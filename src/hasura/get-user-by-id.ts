@@ -9,7 +9,7 @@ export const getUserById = async (id: string): Promise<User | undefined> => {
       gql`
         ${USER_FRAGMENT}
         query($id: uuid!) {
-          users_by_pk(id: $id) {
+          user_by_pk(id: $id) {
             ...UserParts
           }
         }
@@ -17,7 +17,7 @@ export const getUserById = async (id: string): Promise<User | undefined> => {
       { id },
     );
 
-    return response.data.users_by_pk || undefined;
+    return response.data.user_by_pk || undefined;
   } catch (e) {
     throw new Error('Unable to find the user');
   }

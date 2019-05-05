@@ -11,7 +11,7 @@ export const getUserByEmail = async (
     const response = await hasuraQuery(
       gql`
         ${USER_FRAGMENT}
-        query($where: users_bool_exp) {
+        query($where: user_bool_exp) {
           users(where: $where) {
             ...UserParts
           }
