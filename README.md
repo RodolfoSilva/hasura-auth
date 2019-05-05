@@ -5,7 +5,8 @@ Inspired by the [hasura-backend-plus](https://github.com/elitan/hasura-backend-p
 ## Setup
 
 Create tables and initial state for your user management.
-```sql
+```sql      
+CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
 CREATE TABLE "user" (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   email citext NOT NULL UNIQUE,
@@ -25,7 +26,7 @@ CREATE TABLE "user_session" (
   expires_at timestamp with time zone NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   updated_at timestamp with time zone NOT NULL DEFAULT now(),
-  FOREIGN KEY (user_id) REFERENCES users (id)
+  FOREIGN KEY (user_id) REFERENCES "user" (id)
 );
 ```
 
