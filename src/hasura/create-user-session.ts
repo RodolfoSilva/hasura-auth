@@ -32,7 +32,7 @@ export const createUserSession = async (
       },
     );
 
-    const sessionId = getIn(result, 'data.insert_user_session.returning.id');
+    const sessionId = getIn(result, 'data.insert_user_session.returning[0].id');
 
     if (sessionId === undefined) {
       return Promise.reject(new Error('Error to create the user session'));
