@@ -86,12 +86,24 @@ const resolvers = {
     },
   },
   Mutation: {
-    async auth_login(_, { email, password }) {
+    async auth_login(_, { email, password }, ctx) {
       const user: User = await getUserByCredentials(email, password);
 
       const accessToken = generateJwtToken(user);
 
-      const refreshToken = await createUserSession(user);
+      const ipAddress = (
+        ctx.req.headers['x-forwarded-for'] ||
+        ctx.req.connection.remoteAddress ||
+        ''
+      )
+        .split(',')[0]
+        .trim();
+
+      const refreshToken = await createUserSession(
+        user,
+        ctx.req.headers['user-agent'],
+        ipAddress,
+      );
 
       return {
         accessToken,
