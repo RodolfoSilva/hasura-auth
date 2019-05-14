@@ -4,7 +4,7 @@ import getIntersection from 'lodash/intersection';
 import isEmpty from 'lodash/isEmpty';
 import { Request } from 'express';
 import * as vars from './vars';
-import { generateJwtToken } from './auth-tools';
+import { generateClaimsJwtToken, generateJwtToken } from './auth-tools';
 import {
   User,
   createUserSession,
@@ -89,7 +89,7 @@ const resolvers = {
     async auth_login(_, { email, password }, ctx) {
       const user: User = await getUserByCredentials(email, password);
 
-      const accessToken = generateJwtToken(user);
+      const accessToken = generateClaimsJwtToken(user);
 
       const ipAddress = (
         ctx.req.headers['x-forwarded-for'] ||
@@ -160,9 +160,22 @@ const resolvers = {
 
       const user = await getUserByIdAndRefreshToken(userId, refreshToken);
 
-      const newRefreshToken = updateUserRefreshToken(user, refreshToken);
+      // const newRefreshToken = updateUserRefreshToken(user, refreshToken);
+      const ipAddress = (
+        ctx.req.headers['x-forwarded-for'] ||
+        ctx.req.connection.remoteAddress ||
+        ''
+      )
+        .split(',')[0]
+        .trim();
 
-      const accessToken = generateJwtToken(user);
+      const newRefreshToken = await createUserSession(
+        user,
+        ctx.req.headers['user-agent'],
+        ipAddress,
+      );
+
+      const accessToken = generateClaimsJwtToken(user, refreshToken);
 
       return {
         accessToken,
