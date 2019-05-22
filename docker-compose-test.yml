@@ -1,0 +1,37 @@
+
+version: '3.6'
+services:
+  db:
+    image: postgres:11-alpine
+    restart: always
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  graphql-engine:
+    image: hasura/graphql-engine:v1.0.0-beta.2.cli-migrations
+    depends_on:
+      - "db"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@postgres:5432/postgres
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
+      HASURA_GRAPHQL_AUTH_HOOK: http://hasura-auth:4000/hook
+      HASURA_GRAPHQL_ADMIN_SECRET: secretmasterkey
+    command:
+      - graphql-engine
+      - serve
+    volumes:
+      - ./migrations:/hasura-migrations
+  test:
+    build: .
+    depends_on:
+      - "graphql-engine"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_ENDPOINT: http://graphql-engine:8080/v1/graphql
+      HASURA_GRAPHQL_ADMIN_SECRET: secretmasterkey 
+      JWT_ALGORITHM: HS256
+      JWT_PRIVATE_KEY: eec2f63b931bd47417a81a538327af927da3e
+      REFRESH_TOKEN_EXPIRES_IN: 54000
+    command: ["sh", "./wait-for-it.sh", "db:5432", "--", "yarn", "test"]
+volumes:
+  db_data:

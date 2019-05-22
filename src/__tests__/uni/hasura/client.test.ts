@@ -50,7 +50,7 @@ test('createUser calls fetch with the right args and returns the user id', async
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      'x-hasura-admin-secret': 'masterkey',
+      'x-hasura-admin-secret': 'secretmasterkey',
     },
   });
 
