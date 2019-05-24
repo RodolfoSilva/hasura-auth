@@ -1,0 +1,34 @@
+- args:
+    cascade: true
+    sql: |-
+      CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
+      CREATE TABLE "user" (
+        id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        email citext NOT NULL UNIQUE,
+        password text NOT NULL,
+        role text NOT NULL DEFAULT 'user',
+        is_active boolean NOT NULL DEFAULT false,
+        secret_token uuid NOT NULL,
+        created_at timestamp with time zone NOT NULL DEFAULT now(),
+        updated_at timestamp with time zone NOT NULL DEFAULT now()
+      );
+
+      CREATE TABLE user_session (
+        id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_agent text NULL,
+        ip_address text NULL,
+        user_id uuid NOT NULL,
+        expires_at timestamp with time zone NOT NULL,
+        created_at timestamp with time zone NOT NULL DEFAULT now(),
+        updated_at timestamp with time zone NOT NULL DEFAULT now(),
+        FOREIGN KEY (user_id) REFERENCES "user" (id)
+      );
+  type: run_sql
+- args:
+    name: user
+    schema: public
+  type: add_existing_table_or_view
+- args:
+    name: user_session
+    schema: public
+  type: add_existing_table_or_view

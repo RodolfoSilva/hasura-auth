@@ -12,7 +12,7 @@ services:
       - "db"
     restart: always
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@postgres:5432/postgres
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@db:5432/postgres
       HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
       HASURA_GRAPHQL_AUTH_HOOK: http://hasura-auth:4000/hook
       HASURA_GRAPHQL_ADMIN_SECRET: secretmasterkey
@@ -21,17 +21,17 @@ services:
       - serve
     volumes:
       - ./migrations:/hasura-migrations
-  test:
+  hasura-auth:
     build: .
     depends_on:
       - "graphql-engine"
-    restart: always
+      - "db"
     environment:
       HASURA_GRAPHQL_ENDPOINT: http://graphql-engine:8080/v1/graphql
       HASURA_GRAPHQL_ADMIN_SECRET: secretmasterkey 
       JWT_ALGORITHM: HS256
       JWT_PRIVATE_KEY: eec2f63b931bd47417a81a538327af927da3e
       REFRESH_TOKEN_EXPIRES_IN: 54000
-    command: ["sh", "./wait-for-it.sh", "db:5432", "--", "yarn", "test"]
+    command: ["sh", "./wait-for-it.sh", "graphql-engine:8080", "--", "yarn", "test"]
 volumes:
   db_data:
