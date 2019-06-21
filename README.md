@@ -23,6 +23,7 @@ CREATE TABLE "user_session" (
   user_agent text NULL,
   ip_address text NULL,
   user_id uuid NOT NULL,
+  refresh_token text NOT NULL,
   expires_at timestamp with time zone NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   updated_at timestamp with time zone NOT NULL DEFAULT now(),
