@@ -4,8 +4,6 @@ services:
   db:
     image: postgres:11-alpine
     restart: always
-    volumes:
-      - db_data:/var/lib/postgresql/data
   graphql-engine:
     image: hasura/graphql-engine:v1.0.0-beta.2.cli-migrations
     depends_on:
@@ -26,12 +24,17 @@ services:
     depends_on:
       - "graphql-engine"
       - "db"
+    restart: always
     environment:
       HASURA_GRAPHQL_ENDPOINT: http://graphql-engine:8080/v1/graphql
       HASURA_GRAPHQL_ADMIN_SECRET: secretmasterkey 
       JWT_ALGORITHM: HS256
       JWT_PRIVATE_KEY: eec2f63b931bd47417a81a538327af927da3e
       REFRESH_TOKEN_EXPIRES_IN: 54000
-    command: ["sh", "./wait-for-it.sh", "graphql-engine:8080", "--", "yarn", "test"]
-volumes:
-  db_data:
+  test:
+    build: .
+    depends_on:
+      - "hasura-auth"
+    environment:
+      HASURA_GRAPHQL_ENDPOINT: http://graphql-engine:8080/v1/graphql
+    command: ["sh", "./wait-for-it.sh", "-t", "30", "-s", "5", "hasura-auth:4000", "--", "yarn", "integration"]

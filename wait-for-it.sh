@@ -1,6 +1,7 @@
 #!/bin/sh
 
 TIMEOUT=15
+SLEEP=0
 QUIET=0
 
 echoerr() {
@@ -14,6 +15,7 @@ Usage:
   $cmdname host:port [-t timeout] [-- command args]
   -q | --quiet                        Do not output any status messages
   -t TIMEOUT | --timeout=timeout      Timeout in seconds, zero for no timeout
+  -s SLEEP | --sleep=sleep            Sleep in seconds, zero for no sleep
   -- COMMAND ARGS                     Execute command with args after the test finishes
 USAGE
   exit "$exitcode"
@@ -26,6 +28,7 @@ wait_for() {
     result=$?
     if [ $result -eq 0 ] ; then
       if [ $# -gt 0 ] ; then
+        sleep "$SLEEP"
         exec "$@"
       fi
       exit 0
@@ -55,6 +58,15 @@ do
     ;;
     --timeout=*)
     TIMEOUT="${1#*=}"
+    shift 1
+    ;;
+    -s)
+    SLEEP="$2"
+    if [ "$SLEEP" = "" ]; then break; fi
+    shift 2
+    ;;
+    --sleep=*)
+    SLEEP="${1#*=}"
     shift 1
     ;;
     --)

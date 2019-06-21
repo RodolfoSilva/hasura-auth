@@ -9,6 +9,7 @@
     "build": "cross-env NODE_ENV=production rimraf build && tsc",
     "prepublish": "in-publish && yarn run lint && yarn run test && yarn run build || not-in-publish",
     "test": "jest --ci",
+    "integration": "jest --ci -c jest.config.integration.js",
     "lint": "tslint -p tsconfig.json"
   },
   "files": [
