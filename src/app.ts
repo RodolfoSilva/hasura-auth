@@ -37,7 +37,7 @@ export const createApp = (): Application => {
 
       response.json(payload[vars.hasuraGraphqlClaimsKey]);
     } catch (e) {
-      response.json(unauthorizedResponseBody);
+      response.sendStatus(401);
     }
   });
 
