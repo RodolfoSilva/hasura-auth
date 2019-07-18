@@ -9,7 +9,7 @@ export const createUserSession = async (
   user: User,
   userAgent?: string,
   ipAddress?: string,
-): Promise<string> => {
+): Promise<[string, string]> => {
   try {
     const refreshToken = uuidv4();
     const expiresAt = getExpiresDate();
@@ -41,7 +41,7 @@ export const createUserSession = async (
       return Promise.reject(new Error('Error to create the user session'));
     }
 
-    return refreshToken;
+    return [refreshToken, sessionId];
   } catch (e) {
     throw new Error('Could not create "session" for user');
   }

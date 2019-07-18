@@ -20,14 +20,14 @@ export const generateJwtRefreshToken = (payload: any) => {
   return jwt.sign(payload, vars.jwtSecretKey, jwtOptions);
 };
 
-export const generateClaimsJwtToken = (user: User, prevSessionId?: string) => {
+export const generateClaimsJwtToken = (user: User, sessionId: string) => {
   const payload = {
     [vars.hasuraGraphqlClaimsKey]: {
       [`${vars.hasuraHeaderPrefix}allowed-roles`]: user.role,
       [`${vars.hasuraHeaderPrefix}default-role`]: user.role,
       [`${vars.hasuraHeaderPrefix}role`]: user.role,
       [`${vars.hasuraHeaderPrefix}user-id`]: user.id.toString(),
-      [`${vars.hasuraHeaderPrefix}prev-session-id`]: prevSessionId,
+      [`${vars.hasuraHeaderPrefix}session-id`]: sessionId,
     },
   };
 

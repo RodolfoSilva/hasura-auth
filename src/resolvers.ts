@@ -13,7 +13,6 @@ import {
   changeUserPassword,
   activateUser,
   getUserByIdAndRefreshToken,
-  updateUserRefreshToken,
   getUserByCredentials,
 } from './hasura';
 
@@ -89,8 +88,6 @@ const resolvers = {
     async auth_login(_, { email, password }, ctx) {
       const user: User = await getUserByCredentials(email, password);
 
-      const accessToken = generateClaimsJwtToken(user);
-
       const ipAddress = (
         ctx.req.headers['x-forwarded-for'] ||
         ctx.req.connection.remoteAddress ||
@@ -99,11 +96,13 @@ const resolvers = {
         .split(',')[0]
         .trim();
 
-      const refreshToken = await createUserSession(
+      const [refreshToken, sessionId] = await createUserSession(
         user,
         ctx.req.headers['user-agent'],
         ipAddress,
       );
+
+      const accessToken = generateClaimsJwtToken(user, sessionId);
 
       return {
         accessToken,
@@ -170,7 +169,6 @@ const resolvers = {
         refreshTokenPayload.token,
       );
 
-      // const newRefreshToken = updateUserRefreshToken(user, refreshToken);
       const ipAddress = (
         ctx.req.headers['x-forwarded-for'] ||
         ctx.req.connection.remoteAddress ||
@@ -179,13 +177,13 @@ const resolvers = {
         .split(',')[0]
         .trim();
 
-      const newRefreshToken = await createUserSession(
+      const [newRefreshToken, sessionId] = await createUserSession(
         user,
         ctx.req.headers['user-agent'],
         ipAddress,
       );
 
-      const accessToken = generateClaimsJwtToken(user);
+      const accessToken = generateClaimsJwtToken(user, sessionId);
 
       return {
         accessToken,
