@@ -2,10 +2,14 @@
 
 Inspired by the [hasura-backend-plus](https://github.com/elitan/hasura-backend-plus)
 
+[![](https://images.microbadger.com/badges/image/rodolfosilva/hasura-auth.svg)](https://microbadger.com/images/rodolfosilva/hasura-auth 'Get your own image badge on microbadger.com')
+[![](https://images.microbadger.com/badges/version/rodolfosilva/hasura-auth.svg)](https://microbadger.com/images/rodolfosilva/hasura-auth 'Get your own version badge on microbadger.com')
+
 ## Setup
 
 Create tables and initial state for your user management.
-```sql      
+
+```sql
 CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
 CREATE TABLE "user" (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -16,7 +20,7 @@ CREATE TABLE "user" (
   secret_token uuid NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   updated_at timestamp with time zone NOT NULL DEFAULT now()
-); 
+);
 
 CREATE TABLE "user_session" (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -38,9 +42,11 @@ Go to the Hasura console. Click the "Data" menu link and then click "Track all" 
 ### Enable auth hook
 
 Set your hasura environment to use this configuration:
+
 ```
 HASURA_GRAPHQL_AUTH_HOOK=https://<your-domain-with-hasura-auth>/hook
 ```
+
 [Read more...](https://docs.hasura.io/1.0/graphql/manual/auth/webhook.html)
 
 ### Use Remote Schema
@@ -53,7 +59,7 @@ In "Headers for the remote GraphQL server" select the option "Forward all header
 ## Environment
 
 | name                            | default                                       | description                           |
-|---------------------------------|-----------------------------------------------|---------------------------------------|
+| ------------------------------- | --------------------------------------------- | ------------------------------------- |
 | `PORT`                          | `4000`                                        | Express server port                   |
 | `HASURA_GRAPHQL_ENDPOINT`       | `http://graphql-engine:8080/v1alpha1/graphql` | Endpoit to hasura server              |
 | `HASURA_GRAPHQL_ADMIN_SECRET`   | `NULL`                                        | Admin secrete key of hasura console   |
@@ -67,9 +73,9 @@ In "Headers for the remote GraphQL server" select the option "Forward all header
 
 ## Todo
 
-* [ ] Google Login
-* [ ] Facebook Login
-* [ ] Twitter Login
+- [ ] Google Login
+- [ ] Facebook Login
+- [ ] Twitter Login
 
 ## License
 
