@@ -1,3 +1,4 @@
+import uuidv4 from 'uuid/v4';
 import getIn from 'lodash/get';
 import gql from 'graphql-tag';
 import { hasuraQuery } from './client';
@@ -10,6 +11,7 @@ export const createUserSession = async (
   ipAddress?: string,
 ): Promise<string> => {
   try {
+    const refreshToken = uuidv4();
     const expiresAt = getExpiresDate();
 
     const result = await hasuraQuery(
@@ -25,6 +27,7 @@ export const createUserSession = async (
       {
         userSessionData: {
           user_id: user.id,
+          refresh_token: refreshToken,
           expires_at: expiresAt,
           user_agent: userAgent,
           ip_address: ipAddress,
@@ -38,7 +41,7 @@ export const createUserSession = async (
       return Promise.reject(new Error('Error to create the user session'));
     }
 
-    return sessionId;
+    return refreshToken;
   } catch (e) {
     throw new Error('Could not create "session" for user');
   }
