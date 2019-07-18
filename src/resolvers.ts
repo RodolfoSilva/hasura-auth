@@ -4,7 +4,7 @@ import getIntersection from 'lodash/intersection';
 import isEmpty from 'lodash/isEmpty';
 import { Request } from 'express';
 import * as vars from './vars';
-import { generateClaimsJwtToken, generateJwtToken } from './auth-tools';
+import { generateClaimsJwtToken, generateJwtRefreshToken } from './auth-tools';
 import {
   User,
   createUserSession,
@@ -107,7 +107,9 @@ const resolvers = {
 
       return {
         accessToken,
-        refreshToken,
+        refreshToken: generateJwtRefreshToken({
+          token: refreshToken,
+        }),
         userId: user.id,
       };
     },
@@ -153,12 +155,20 @@ const resolvers = {
 
       const payload: any = jwt.decode(authorization.split(' ')[1]);
 
+      const refreshTokenPayload: any = jwt.verify(
+        refreshToken,
+        vars.jwtSecretKey,
+      );
+
       const userId = getIn(
         payload,
         `["${vars.hasuraGraphqlClaimsKey}"]${vars.hasuraHeaderPrefix}user-id`,
       );
 
-      const user = await getUserByIdAndRefreshToken(userId, refreshToken);
+      const user = await getUserByIdAndRefreshToken(
+        userId,
+        refreshTokenPayload.token,
+      );
 
       // const newRefreshToken = updateUserRefreshToken(user, refreshToken);
       const ipAddress = (
@@ -179,7 +189,9 @@ const resolvers = {
 
       return {
         accessToken,
-        refreshToken: newRefreshToken,
+        refreshToken: generateJwtRefreshToken({
+          token: newRefreshToken,
+        }),
         userId,
       };
     },

@@ -2,10 +2,19 @@ import jwt from 'jsonwebtoken';
 import { User } from './hasura';
 import * as vars from './vars';
 
-export const generateJwtToken = (payload: any) => {
+export const generateJwtAccessToken = (payload: any) => {
   const jwtOptions: jwt.SignOptions = {
     algorithm: vars.jwtAlgorithm,
     expiresIn: vars.jwtTokenExpiresIn,
+  };
+
+  return jwt.sign(payload, vars.jwtSecretKey, jwtOptions);
+};
+
+export const generateJwtRefreshToken = (payload: any) => {
+  const jwtOptions: jwt.SignOptions = {
+    algorithm: vars.jwtAlgorithm,
+    expiresIn: vars.jwtRefreshTokenExpiresIn,
   };
 
   return jwt.sign(payload, vars.jwtSecretKey, jwtOptions);
@@ -22,5 +31,5 @@ export const generateClaimsJwtToken = (user: User, prevSessionId?: string) => {
     },
   };
 
-  return generateJwtToken(payload);
+  return generateJwtAccessToken(payload);
 };

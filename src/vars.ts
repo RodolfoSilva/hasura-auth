@@ -14,6 +14,8 @@ export const hasuraGraphqlClaimsKey = process.env
 export const hasuraHeaderPrefix = process.env.HASURA_GRAPHQL_HEADER_PREFIX;
 export const jwtAlgorithm = process.env.JWT_ALGORITHM as string;
 export const jwtTokenExpiresIn = `${process.env.JWT_TOKEN_EXPIRES as string}m`;
+export const jwtRefreshTokenExpiresIn = `${process.env
+  .JWT_REFRESH_TOKEN_EXPIRES as string}m`;
 export const jwtSecretKey = process.env.JWT_PRIVATE_KEY as string;
 export const refreshTokenExpiresIn = Number(process.env
   .REFRESH_TOKEN_EXPIRES_IN as string);
