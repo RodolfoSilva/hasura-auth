@@ -24,7 +24,7 @@ services:
     volumes:
       - ./migrations:/hasura-migrations
   hasura-auth:
-    image: rodolfosilva/hasura-auth:0.0.17
+    image: rodolfosilva/hasura-auth:0.0.19
     depends_on:
       - 'graphql-engine'
     restart: always
