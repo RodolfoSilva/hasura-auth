@@ -175,7 +175,7 @@ const resolvers = {
         ipAddress,
       );
 
-      const accessToken = generateClaimsJwtToken(user, refreshToken);
+      const accessToken = generateClaimsJwtToken(user);
 
       return {
         accessToken,
