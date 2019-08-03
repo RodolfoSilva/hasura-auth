@@ -12,6 +12,7 @@ export const createApp = (): Application => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
+    introspection: `${process.env.INTROSPECTION}` !== 'false',
     context: ({ res, req }) => ({ res, req }),
   });
 
