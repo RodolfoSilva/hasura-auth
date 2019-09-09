@@ -16,14 +16,55 @@ import {
   getUserByCredentials,
 } from './hasura';
 
+const getRole = (req: Request) => getIn(req, `headers["${vars.hasuraHeaderPrefix}role"]`, '');
+const isAdmin = (req: Request) => getRole(req) === 'admin';
+
+const getDataFromVerifiedAuthorizationToken = (req: Request): undefined | any => {
+  const { authorization } = req.headers;
+
+  if (authorization === undefined) {
+    return void 0;
+  }
+
+  const token = authorization.replace('Bearer ', '');
+
+  try {
+    return jwt.verify(token, vars.jwtSecretKey);
+  } catch (e) {
+    return void 0;
+  }
+};
+
+const getFieldFromDataAuthorizationToken = (req: Request, field) => {
+  const verifiedToken: any = getDataFromVerifiedAuthorizationToken(req);
+
+  return getIn(verifiedToken, `["${vars.hasuraGraphqlClaimsKey}"]${vars.hasuraHeaderPrefix}${field}`);
+};
+
+const getCurrentUserId = (req: Request) => getFieldFromDataAuthorizationToken(req, 'user-id');
+
+const isAuthenticated = (req: Request): boolean => {
+  return !!getDataFromVerifiedAuthorizationToken(req);
+};
+
+const checkUserCanDoRegistration = (req: Request): boolean => {
+  if (isAdmin(req)) {
+    return true;
+  }
+
+  if (vars.allowRegistrationFor !== '*') {
+    const allowedRoles = vars.allowRegistrationFor.split(',');
+    return allowedRoles.includes(getRole(req));
+  }
+
+  return true;
+};
+
 const checkUserIsPartOfStaffOrIsTheCurrentUser = (
   req: Request,
   userId: string,
 ): boolean => {
-  if (
-    req.headers[`${vars.hasuraHeaderPrefix}admin-secret`] ===
-    vars.hasuraGraphqlAdminSecret
-  ) {
+  if (isAdmin(req)) {
     return true;
   }
 
@@ -35,27 +76,14 @@ const checkUserIsPartOfStaffOrIsTheCurrentUser = (
     return true;
   }
 
-  const { authorization } = req.headers;
-
-  if (authorization === undefined) {
+  if (!isAuthenticated(req)) {
     return false;
   }
 
   try {
-    const verifiedToken: any = jwt.verify(
-      authorization.replace('Bearer ', ''),
-      vars.jwtSecretKey,
-    );
-
-    const currentUserId = getIn(
-      verifiedToken,
-      `["${vars.hasuraGraphqlClaimsKey}"]${vars.hasuraHeaderPrefix}user-id`,
-    );
-    console.log(currentUserId);
-
+    const currentUserId = getCurrentUserId(req);
     return currentUserId === userId;
   } catch (e) {
-    console.log(e);
     return false;
   }
 };
@@ -63,22 +91,14 @@ const checkUserIsPartOfStaffOrIsTheCurrentUser = (
 const resolvers = {
   Query: {
     async auth_me(_, args, ctx) {
-      const { authorization } = ctx.req.headers;
-
-      if (!authorization) {
+      if (!isAuthenticated(ctx.req)) {
         throw new Error('Authorization token has not provided');
       }
 
       try {
-        const token = authorization.replace('Bearer ', '');
-        const verifiedToken: any = jwt.verify(token, vars.jwtSecretKey);
+        const currentUserId = getCurrentUserId(ctx.req);
 
-        const userId = getIn(
-          verifiedToken,
-          `["${vars.hasuraGraphqlClaimsKey}"]${vars.hasuraHeaderPrefix}user-id`,
-        );
-
-        return getUserById(userId);
+        return getUserById(currentUserId);
       } catch (e) {
         throw new Error('Not logged in.');
       }
@@ -112,7 +132,10 @@ const resolvers = {
         userId: user.id,
       };
     },
-    async auth_register(_, { email, password }) {
+    async auth_register(_, { email, password }, ctx) {
+      if (!checkUserCanDoRegistration(ctx.req)) {
+        throw new Error('Forbidden');
+      }
       const user = await createUserAccount(email, password);
       return user !== undefined;
     },

@@ -20,6 +20,7 @@ export const jwtSecretKey = process.env.JWT_PRIVATE_KEY as string;
 export const refreshTokenExpiresIn = Number(process.env
   .REFRESH_TOKEN_EXPIRES_IN as string);
 export const port = Number(process.env.PORT as string);
+export const allowRegistrationFor = process.env.ALLOW_REGISTRATION_FOR as string;
 export const userRegistrationAutoActive = Boolean(
   process.env.USER_REGISTRATION_AUTO_ACTIVE,
 );
