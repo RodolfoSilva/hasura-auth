@@ -31,16 +31,6 @@ CREATE TABLE "user" (
   FOREIGN KEY (default_role) REFERENCES role (name)
 );
 
-CREATE TABLE "user_roles" (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL,
-  role text NOT NULL,
-  created_at timestamp with time zone NOT NULL DEFAULT now(),
-  FOREIGN KEY (user_id) REFERENCES user (id),
-  FOREIGN KEY (role) REFERENCES role (name),
-  UNIQUE (user_id, role)
-);
-
 CREATE TABLE "user_role" (
   id uuid DEFAULT gen_random_uuid() NOT NULL CONSTRAINT user_role_pkey PRIMARY KEY,
   user_id uuid NOT NULL CONSTRAINT user_role_user_id_fkey REFERENCES "user" ON UPDATE CASCADE ON DELETE CASCADE,
