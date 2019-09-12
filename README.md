@@ -11,15 +11,43 @@ Create tables and initial state for your user management.
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
+
+CREATE TABLE "role" (
+  name text NOT NULL PRIMARY KEY,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+);
+
+INSERT INTO "roles" ("name") VALUES ('user');
+
 CREATE TABLE "user" (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   email citext NOT NULL UNIQUE,
   password text NOT NULL,
-  role text NOT NULL DEFAULT 'user',
+  default_role text NOT NULL DEFAULT 'user',
   is_active boolean NOT NULL DEFAULT false,
   secret_token uuid NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
-  updated_at timestamp with time zone NOT NULL DEFAULT now()
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  FOREIGN KEY (default_role) REFERENCES role (name)
+);
+
+CREATE TABLE "user_roles" (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  role text NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  FOREIGN KEY (user_id) REFERENCES user (id),
+  FOREIGN KEY (role) REFERENCES role (name),
+  UNIQUE (user_id, role)
+);
+
+CREATE TABLE "user_role" (
+  id uuid DEFAULT gen_random_uuid() NOT NULL CONSTRAINT user_role_pkey PRIMARY KEY,
+  user_id uuid NOT NULL CONSTRAINT user_role_user_id_fkey REFERENCES "user" ON UPDATE CASCADE ON DELETE CASCADE,
+  role text NOT NULL,
+  created_at timestamp WITH TIME ZONE DEFAULT now() NOT NULL,
+  updated_at timestamp WITH TIME ZONE DEFAULT now() not null,
+  CONSTRAINT user_role_user_id_role_key UNIQUE (user_id, role)
 );
 
 CREATE TABLE "user_session" (

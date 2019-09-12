@@ -19,7 +19,7 @@ export const typeDefs = gql`
     email: String!
     is_active: String!
     default_role: String!
-    roles: [Role!]!
+    user_roles: [Role!]!
     created_at: String!
   }
 
