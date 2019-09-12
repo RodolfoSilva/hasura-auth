@@ -88,6 +88,7 @@ In "Headers for the remote GraphQL server" select the option "Forward all header
 | `JWT_ALGORITHM`                 | `HS256`                                       | JWT Algorithm                         |
 | `JWT_PRIVATE_KEY`               | `secretkey`                                   | JWT Secret key used to generate token |
 | `JWT_TOKEN_EXPIRES`             | `15`                                          | Life time in minutes of JWT           |
+| `allowRegistrationFor`          | `*`                                           | Allow registration by role            |
 
 ## Todo
 
