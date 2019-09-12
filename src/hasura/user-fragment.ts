@@ -7,7 +7,11 @@ export const USER_FRAGMENT = gql`
     password
     is_active
     secret_token
-    role
+    default_role
+    user_roles {
+      id
+      role
+    }
     created_at
     updated_at
   }
