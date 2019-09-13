@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import jwt from 'jsonwebtoken';
 import { ApolloServer } from 'apollo-server-express';
+import omitIn from 'lodash/omit';
 import resolvers from './resolvers';
 import { typeDefs } from './typeDefs';
 import * as vars from './vars';
@@ -28,6 +29,7 @@ export const createApp = (): Application => {
 
     try {
       const token = request.get('Authorization');
+      let role = request.get('x-hasura-role');
 
       if (!token) {
         response.json(unauthorizedResponseBody);
@@ -36,7 +38,21 @@ export const createApp = (): Application => {
 
       const payload: any = jwt.verify(token.split(' ')[1], vars.jwtSecretKey);
 
-      response.json(payload[vars.hasuraGraphqlClaimsKey]);
+      const claims = payload[vars.hasuraGraphqlClaimsKey];
+
+      if (role === undefined) {
+        role = claims['x-hasura-default-role'];
+      }
+
+      if (!claims['x-hasura-allowed-roles'].includes(role)) {
+        response.sendStatus(401);
+        return;
+      }
+
+      response.json({
+        ...omitIn(claims, ['x-hasura-default-role', 'x-hasura-allowed-roles']),
+        'x-hasura-role': role,
+      });
     } catch (e) {
       response.sendStatus(401);
     }
