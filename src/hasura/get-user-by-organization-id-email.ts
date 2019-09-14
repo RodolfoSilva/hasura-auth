@@ -4,7 +4,8 @@ import { hasuraQuery } from './client';
 import { User } from './user-type';
 import { USER_FRAGMENT } from './user-fragment';
 
-export const getUserByEmail = async (
+export const getUserByOrganizationIdAndEmail = async (
+  organizationId: string | null,
   email: string,
 ): Promise<User | undefined> => {
   try {
@@ -19,6 +20,7 @@ export const getUserByEmail = async (
       `,
       {
         where: {
+          organization_id: { _eq: organizationId },
           email: { _eq: email.toLowerCase() },
         },
       },

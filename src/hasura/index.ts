@@ -1,6 +1,6 @@
 export { User } from './user-type';
 export { getUserById } from './get-user-by-id';
-export { getUserByEmail } from './get-user-by-email';
+import { getUserByOrganizationIdAndEmail } from './get-user-by-organization-id-email';
 export { getUserByCredentials } from './get-user-by-credentials';
 export { createUserSession } from './create-user-session';
 export { createUserAccount } from './create-user-account';

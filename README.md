@@ -14,20 +14,29 @@ CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
 
 CREATE TABLE "role" (
   name text NOT NULL PRIMARY KEY,
-  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  created_at timestamp with time zone NOT NULL DEFAULT now()
 );
 
-INSERT INTO "roles" ("name") VALUES ('user');
+INSERT INTO "role" ("name") VALUES ('user');
+
+CREATE TABLE "organization" (
+  id uuid DEFAULT gen_random_uuid() NOT NULL CONSTRAINT organization_pkey PRIMARY KEY,
+  name text NOT NULL,
+  created_at timestamp WITH TIME ZONE DEFAULT now() NOT NULL,
+  updated_at timestamp WITH TIME ZONE DEFAULT now() NOT NULL
+);
 
 CREATE TABLE "user" (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  email citext NOT NULL UNIQUE,
+  organization_id uuid NULL CONSTRAINT user_organization_id_fkey REFERENCES "organization" ON UPDATE CASCADE ON DELETE CASCADE,
+  email citext NOT NULL,
   password text NOT NULL,
   default_role text NOT NULL DEFAULT 'user',
   is_active boolean NOT NULL DEFAULT false,
   secret_token uuid NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT user_email_organization_id_key UNIQUE (email, organization_id),
   FOREIGN KEY (default_role) REFERENCES role (name)
 );
 
@@ -88,7 +97,8 @@ In "Headers for the remote GraphQL server" select the option "Forward all header
 | `JWT_ALGORITHM`                 | `HS256`                                       | JWT Algorithm                         |
 | `JWT_PRIVATE_KEY`               | `secretkey`                                   | JWT Secret key used to generate token |
 | `JWT_TOKEN_EXPIRES`             | `15`                                          | Life time in minutes of JWT           |
-| `allowRegistrationFor`          | `*`                                           | Allow registration by role            |
+| `ALLOW_REGISTRATION_FOR`        | `*`                                           | Allow registration by role            |
+| `ALLOW_EMPTY_ORGANIZATION`      | `true`                                        | Allow use empty organization          |
 
 ## Todo
 
