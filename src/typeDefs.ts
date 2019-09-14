@@ -49,11 +49,7 @@ export const typeDefs = gql`
       email: String!
       password: String!
     ): AffectedRows
-    auth_change_password(
-      organization_id: String
-      user_id: ID!
-      new_password: String!
-    ): AffectedRows
+    auth_change_password(user_id: ID!, new_password: String!): AffectedRows
     auth_activate_account(
       organization_id: String
       email: ID!

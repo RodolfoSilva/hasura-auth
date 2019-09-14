@@ -113,6 +113,10 @@ const resolvers = {
   },
   Mutation: {
     async auth_login(_, { organization_id, email, password }, ctx) {
+      if (!vars.allowEmptyOrganization && !!organization_id) {
+        throw new Error('Missing organization_id.');
+      }
+
       const user: User = await getUserByCredentials(
         organization_id,
         email,
@@ -145,9 +149,14 @@ const resolvers = {
       };
     },
     async auth_register(_, { organization_id, email, password }, ctx) {
+      if (!vars.allowEmptyOrganization && !!organization_id) {
+        throw new Error('Missing organization_id.');
+      }
+
       if (!checkUserCanDoRegistration(ctx.req)) {
         throw new Error('Forbidden');
       }
+
       const user = await createUserAccount(organization_id, email, password);
       return {
         affected_rows: Number(user !== undefined),
@@ -171,6 +180,10 @@ const resolvers = {
       };
     },
     async auth_activate_account(_, { organization_id, email, secret_token }) {
+      if (!vars.allowEmptyOrganization && !!organization_id) {
+        throw new Error('Missing organization_id.');
+      }
+
       if (isEmpty(email)) {
         throw new Error('Invalid email');
       }
