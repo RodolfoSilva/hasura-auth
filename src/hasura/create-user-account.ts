@@ -5,14 +5,18 @@ import gql from 'graphql-tag';
 import { hasuraQuery } from './client';
 import { USER_FRAGMENT } from './user-fragment';
 import { User } from './user-type';
-import { getUserByEmail } from './get-user-by-email';
+import { getUserByOrganizationIdAndEmail } from './get-user-by-organization-id-email';
 import { userRegistrationAutoActive } from '../vars';
 
 export const createUserAccount = async (
+  organizationId: string | null,
   email: string,
   password: string,
 ): Promise<User> => {
-  const user: User | undefined = await getUserByEmail(email);
+  const user: User | undefined = await getUserByOrganizationIdAndEmail(
+    organizationId,
+    email,
+  );
 
   if (user) {
     throw new Error('Email already registered');
@@ -36,6 +40,7 @@ export const createUserAccount = async (
         email: email.toLowerCase(),
         password: passwordHash,
         secret_token: uuidv4(),
+        organization_id: organizationId,
         is_active: userRegistrationAutoActive,
       },
     },

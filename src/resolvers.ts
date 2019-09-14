@@ -16,10 +16,13 @@ import {
   getUserByCredentials,
 } from './hasura';
 
-const getRole = (req: Request) => getIn(req, `headers["${vars.hasuraHeaderPrefix}role"]`, '');
+const getRole = (req: Request) =>
+  getIn(req, `headers["${vars.hasuraHeaderPrefix}role"]`, '');
 const isAdmin = (req: Request) => getRole(req) === 'admin';
 
-const getDataFromVerifiedAuthorizationToken = (req: Request): undefined | any => {
+const getDataFromVerifiedAuthorizationToken = (
+  req: Request,
+): undefined | any => {
   const { authorization } = req.headers;
 
   if (authorization === undefined) {
@@ -38,10 +41,14 @@ const getDataFromVerifiedAuthorizationToken = (req: Request): undefined | any =>
 const getFieldFromDataAuthorizationToken = (req: Request, field) => {
   const verifiedToken: any = getDataFromVerifiedAuthorizationToken(req);
 
-  return getIn(verifiedToken, `["${vars.hasuraGraphqlClaimsKey}"]${vars.hasuraHeaderPrefix}${field}`);
+  return getIn(
+    verifiedToken,
+    `["${vars.hasuraGraphqlClaimsKey}"]${vars.hasuraHeaderPrefix}${field}`,
+  );
 };
 
-const getCurrentUserId = (req: Request) => getFieldFromDataAuthorizationToken(req, 'user-id');
+const getCurrentUserId = (req: Request) =>
+  getFieldFromDataAuthorizationToken(req, 'user-id');
 
 const isAuthenticated = (req: Request): boolean => {
   return !!getDataFromVerifiedAuthorizationToken(req);
@@ -105,8 +112,12 @@ const resolvers = {
     },
   },
   Mutation: {
-    async auth_login(_, { email, password }, ctx) {
-      const user: User = await getUserByCredentials(email, password);
+    async auth_login(_, { organization_id, email, password }, ctx) {
+      const user: User = await getUserByCredentials(
+        organization_id,
+        email,
+        password,
+      );
 
       const ipAddress = (
         ctx.req.headers['x-forwarded-for'] ||
@@ -125,19 +136,22 @@ const resolvers = {
       const accessToken = generateClaimsJwtToken(user, sessionId);
 
       return {
-        accessToken,
-        refreshToken: generateJwtRefreshToken({
+        access_token: accessToken,
+        refresh_token: generateJwtRefreshToken({
           token: refreshToken,
         }),
-        userId: user.id,
+        organization_id: user.organization_id,
+        user_id: user.id,
       };
     },
-    async auth_register(_, { email, password }, ctx) {
+    async auth_register(_, { organization_id, email, password }, ctx) {
       if (!checkUserCanDoRegistration(ctx.req)) {
         throw new Error('Forbidden');
       }
-      const user = await createUserAccount(email, password);
-      return user !== undefined;
+      const user = await createUserAccount(organization_id, email, password);
+      return {
+        affected_rows: Number(user !== undefined),
+      };
     },
     async auth_change_password(_, { user_id, new_password }, ctx) {
       if (!checkUserIsPartOfStaffOrIsTheCurrentUser(ctx.req, user_id)) {
@@ -150,9 +164,13 @@ const resolvers = {
         throw new Error('Unable to find user.');
       }
 
-      return await changeUserPassword(user, new_password);
+      const result = await changeUserPassword(user, new_password);
+
+      return {
+        affected_rows: Number(result),
+      };
     },
-    async auth_activate_account(_, { email, secret_token }) {
+    async auth_activate_account(_, { organization_id, email, secret_token }) {
       if (isEmpty(email)) {
         throw new Error('Invalid email');
       }
@@ -161,7 +179,11 @@ const resolvers = {
         throw new Error('Invalid secret_token');
       }
 
-      return await activateUser(email, secret_token);
+      const result = await activateUser(organization_id, email, secret_token);
+
+      return {
+        affected_rows: Number(result),
+      };
     },
     async auth_refresh_token(_, {}, ctx) {
       const { authorization } = ctx.req.headers;
@@ -209,11 +231,12 @@ const resolvers = {
       const accessToken = generateClaimsJwtToken(user, sessionId);
 
       return {
-        accessToken,
-        refreshToken: generateJwtRefreshToken({
+        access_token: accessToken,
+        refresh_token: generateJwtRefreshToken({
           token: newRefreshToken,
         }),
-        userId,
+        organization_id: user.organization_id,
+        user_id: user.id,
       };
     },
   },

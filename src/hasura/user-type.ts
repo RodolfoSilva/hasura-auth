@@ -5,6 +5,7 @@ interface Role {
 
 export interface User {
   id: string;
+  organization_id: string | null;
   email: string;
   is_active: boolean;
   default_role: string;

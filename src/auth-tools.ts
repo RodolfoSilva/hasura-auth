@@ -24,10 +24,15 @@ export const generateJwtRefreshToken = (payload: any) => {
 export const generateClaimsJwtToken = (user: User, sessionId: string) => {
   const payload = {
     [vars.hasuraGraphqlClaimsKey]: {
-      [`${vars.hasuraHeaderPrefix}allowed-roles`]: uniq([user.default_role, ...user.user_roles.map(({ role }) => role)]).filter(role => !!role),
+      [`${vars.hasuraHeaderPrefix}allowed-roles`]: uniq([
+        user.default_role,
+        ...user.user_roles.map(({ role }) => role),
+      ]).filter(role => !!role),
       [`${vars.hasuraHeaderPrefix}default-role`]: user.default_role,
-      [`${vars.hasuraHeaderPrefix}user-id`]: user.id.toString(),
       [`${vars.hasuraHeaderPrefix}session-id`]: sessionId,
+      [`${vars.hasuraHeaderPrefix}user-id`]: user.id.toString(),
+      [`${vars.hasuraHeaderPrefix}organization-id`]:
+        user.organization_id === null ? '' : user.organization_id,
     },
   };
 
