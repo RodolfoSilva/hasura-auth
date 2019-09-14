@@ -1,5 +1,8 @@
 import dotEnvFlow from 'dotenv-flow';
 
+const valueToBoolean = (value?: string) =>
+  value && value.toLowerCase().trim() === 'true';
+
 dotEnvFlow.config({
   node_env: process.env.NODE_ENV,
   default_node_env: 'development',
@@ -13,8 +16,9 @@ export const hasuraGraphqlClaimsKey = process.env
   .HASURA_GRAPHQL_CLAIMS_KEY as string;
 export const hasuraHeaderPrefix = process.env.HASURA_GRAPHQL_HEADER_PREFIX;
 export const jwtAlgorithm = process.env.JWT_ALGORITHM as string;
-export const allowEmptyOrganization = Boolean(process.env
-  .ALLOW_EMPTY_ORGANIZATION as string);
+export const allowEmptyOrganization = valueToBoolean(
+  process.env.ALLOW_EMPTY_ORGANIZATION,
+);
 export const jwtTokenExpiresIn = `${process.env.JWT_TOKEN_EXPIRES as string}m`;
 export const jwtRefreshTokenExpiresIn = `${process.env
   .JWT_REFRESH_TOKEN_EXPIRES as string}m`;
@@ -24,6 +28,6 @@ export const refreshTokenExpiresIn = Number(process.env
 export const port = Number(process.env.PORT as string);
 export const allowRegistrationFor = process.env
   .ALLOW_REGISTRATION_FOR as string;
-export const userRegistrationAutoActive = Boolean(
+export const userRegistrationAutoActive = valueToBoolean(
   process.env.USER_REGISTRATION_AUTO_ACTIVE,
 );

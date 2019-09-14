@@ -113,7 +113,7 @@ const resolvers = {
   },
   Mutation: {
     async auth_login(_, { organization_id, email, password }, ctx) {
-      if (!vars.allowEmptyOrganization && !!organization_id) {
+      if (!vars.allowEmptyOrganization && !organization_id) {
         throw new Error('Missing organization_id.');
       }
 
@@ -149,7 +149,7 @@ const resolvers = {
       };
     },
     async auth_register(_, { organization_id, email, password }, ctx) {
-      if (!vars.allowEmptyOrganization && !!organization_id) {
+      if (!vars.allowEmptyOrganization && !organization_id) {
         throw new Error('Missing organization_id.');
       }
 
@@ -180,7 +180,7 @@ const resolvers = {
       };
     },
     async auth_activate_account(_, { organization_id, email, secret_token }) {
-      if (!vars.allowEmptyOrganization && !!organization_id) {
+      if (!vars.allowEmptyOrganization && !organization_id) {
         throw new Error('Missing organization_id.');
       }
 

@@ -12,3 +12,5 @@ services:
 #    command: yarn start:dev
     volumes:
       - /app/node_modules
+    environment:
+      ALLOW_EMPTY_ORGANIZATION: 'false'
