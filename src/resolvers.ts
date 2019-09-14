@@ -107,14 +107,14 @@ const resolvers = {
 
         return getUserById(currentUserId);
       } catch (e) {
-        throw new Error('Not logged in.');
+        throw new Error('Not logged in');
       }
     },
   },
   Mutation: {
     async auth_login(_, { organization_id, email, password }, ctx) {
       if (!vars.allowEmptyOrganization && !organization_id) {
-        throw new Error('Missing organization_id.');
+        throw new Error('Missing organization_id');
       }
 
       const user: User = await getUserByCredentials(
@@ -150,7 +150,7 @@ const resolvers = {
     },
     async auth_register(_, { organization_id, email, password }, ctx) {
       if (!vars.allowEmptyOrganization && !organization_id) {
-        throw new Error('Missing organization_id.');
+        throw new Error('Missing organization_id');
       }
 
       if (!checkUserCanDoRegistration(ctx.req)) {
@@ -170,7 +170,7 @@ const resolvers = {
       const user: User | undefined = await getUserById(user_id);
 
       if (!user) {
-        throw new Error('Unable to find user.');
+        throw new Error('Unable to find user');
       }
 
       const result = await changeUserPassword(user, new_password);
@@ -181,7 +181,7 @@ const resolvers = {
     },
     async auth_activate_account(_, { organization_id, email, secret_token }) {
       if (!vars.allowEmptyOrganization && !organization_id) {
-        throw new Error('Missing organization_id.');
+        throw new Error('Missing organization_id');
       }
 
       if (isEmpty(email)) {
