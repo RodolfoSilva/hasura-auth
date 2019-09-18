@@ -55,7 +55,7 @@ export const typeDefs = gql`
       email: ID!
       secret_token: String!
     ): AffectedRows
-    auth_refresh_token: AuthPayload
+    auth_refresh_token(refresh_token: String!): AuthPayload
   }
 
   type Query {

@@ -7,5 +7,5 @@ export { createUserAccount } from './create-user-account';
 export { updateUser } from './update-user';
 export { changeUserPassword } from './change-user-password';
 export { activateUser } from './activate-user';
-export { getUserByIdAndRefreshToken } from './get-user-by-id-and-refresh-token';
+export { getUserByRefreshToken } from './get-user-by-refresh-token';
 export { updateUserRefreshToken } from './update-user-refresh-token';

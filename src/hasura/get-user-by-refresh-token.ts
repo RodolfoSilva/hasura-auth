@@ -4,10 +4,7 @@ import { hasuraQuery } from './client';
 import { User } from './user-type';
 import { USER_FRAGMENT } from './user-fragment';
 
-export const getUserByIdAndRefreshToken = async (
-  id: string,
-  refreshToken: string,
-): Promise<User> => {
+export const getUserByRefreshToken = async (refreshToken: string): Promise<User> => {
   const result = await hasuraQuery(
     gql`
       ${USER_FRAGMENT}
@@ -21,7 +18,6 @@ export const getUserByIdAndRefreshToken = async (
     `,
     {
       where: {
-        user_id: { _eq: id },
         user: { is_active: { _eq: true } },
         refresh_token: { _eq: refreshToken },
         expires_at: { _gte: new Date() },

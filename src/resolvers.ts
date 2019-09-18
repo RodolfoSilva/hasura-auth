@@ -12,7 +12,7 @@ import {
   getUserById,
   changeUserPassword,
   activateUser,
-  getUserByIdAndRefreshToken,
+  getUserByRefreshToken,
   getUserByCredentials,
 } from './hasura';
 
@@ -198,34 +198,17 @@ const resolvers = {
         affected_rows: Number(result),
       };
     },
-    async auth_refresh_token(_, {}, ctx) {
-      const { authorization } = ctx.req.headers;
-      const refreshToken = ctx.req.headers['x-refresh-token'];
-
-      if (!authorization) {
-        throw new Error('Authorization token has not provided');
-      }
-
-      if (!refreshToken) {
+    async auth_refresh_token(_, { refresh_token }, ctx) {
+      if (!refresh_token) {
         throw new Error('Refresh token has not provided');
       }
 
-      const payload: any = jwt.decode(authorization.split(' ')[1]);
-
       const refreshTokenPayload: any = jwt.verify(
-        refreshToken,
+        refresh_token,
         vars.jwtSecretKey,
       );
 
-      const userId = getIn(
-        payload,
-        `["${vars.hasuraGraphqlClaimsKey}"]${vars.hasuraHeaderPrefix}user-id`,
-      );
-
-      const user = await getUserByIdAndRefreshToken(
-        userId,
-        refreshTokenPayload.token,
-      );
+      const user = await getUserByRefreshToken(refreshTokenPayload.token);
 
       const ipAddress = (
         ctx.req.headers['x-forwarded-for'] ||
