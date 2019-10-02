@@ -4,11 +4,13 @@ import { getUserByOrganizationIdAndEmail } from './get-user-by-organization-id-e
 
 export const getUserByCredentials = async (
   organizationId: string | null,
+  id: string | null,
   email: string,
   password: string,
 ): Promise<User> => {
   const user: User | undefined = await getUserByOrganizationIdAndEmail(
     organizationId,
+    id,
     email,
   );
 

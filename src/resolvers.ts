@@ -112,13 +112,14 @@ const resolvers = {
     },
   },
   Mutation: {
-    async auth_login(_, { organization_id, email, password }, ctx) {
+    async auth_login(_, { organization_id, id, email, password }, ctx) {
       if (!vars.allowEmptyOrganization && !organization_id) {
         throw new Error('Missing organization_id');
       }
 
       const user: User = await getUserByCredentials(
         organization_id,
+        id,
         email,
         password,
       );

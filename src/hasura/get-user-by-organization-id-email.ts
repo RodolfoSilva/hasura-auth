@@ -6,6 +6,7 @@ import { USER_FRAGMENT } from './user-fragment';
 
 export const getUserByOrganizationIdAndEmail = async (
   organizationId: string | null,
+  id: string | null,
   email: string,
 ): Promise<User | undefined> => {
   try {
@@ -21,6 +22,7 @@ export const getUserByOrganizationIdAndEmail = async (
       {
         where: {
           organization_id: { _eq: organizationId },
+          id: { _eq: id },
           email: { _eq: email.toLowerCase() },
         },
       },
