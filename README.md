@@ -2,7 +2,6 @@
 
 Inspired by the [hasura-backend-plus](https://github.com/elitan/hasura-backend-plus)
 
-[![](https://images.microbadger.com/badges/image/rodolfosilva/hasura-auth.svg)](https://microbadger.com/images/rodolfosilva/hasura-auth 'Get your own image badge on microbadger.com')
 [![](https://images.microbadger.com/badges/version/rodolfosilva/hasura-auth.svg)](https://microbadger.com/images/rodolfosilva/hasura-auth 'Get your own version badge on microbadger.com')
 
 ## Setup
