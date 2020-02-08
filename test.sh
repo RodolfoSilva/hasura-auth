@@ -2,6 +2,13 @@
 
 echo -e "\033[0;32mGenerate hasura auth image\033[0m"
 build_image_log=$(docker build .)
+
+exit_code="$?"
+if [ ! $exit_code -eq "0" ] ; then
+  echo -e ${build_image_log}
+  exit $exit_code
+fi
+
 image_key=$(grep 'Successfully built' <<< $build_image_log | awk '{print $NF}')
 
 hasura_version="v1.0.0"

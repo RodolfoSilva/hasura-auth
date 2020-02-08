@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import uniq from 'lodash/uniq';
 import { User } from './hasura';
 import * as vars from './vars';
 
@@ -24,11 +23,7 @@ export const generateJwtRefreshToken = (payload: any) => {
 export const generateClaimsJwtToken = (user: User, sessionId: string) => {
   const payload = {
     [vars.hasuraGraphqlClaimsKey]: {
-      [`${vars.hasuraHeaderPrefix}allowed-roles`]: uniq([
-        user.default_role,
-        ...user.user_roles.map(({ role }) => role),
-      ]).filter(role => !!role),
-      [`${vars.hasuraHeaderPrefix}default-role`]: user.default_role,
+      [`${vars.hasuraHeaderPrefix}role`]: user.role,
       [`${vars.hasuraHeaderPrefix}session-id`]: sessionId,
       [`${vars.hasuraHeaderPrefix}user-id`]: user.id.toString(),
       [`${vars.hasuraHeaderPrefix}organization-id`]:

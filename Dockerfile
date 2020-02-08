@@ -8,7 +8,6 @@ COPY package.json yarn.lock ./
 RUN yarn install
 
 COPY . .
-ADD . .
 
 RUN yarn build
 

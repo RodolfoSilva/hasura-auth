@@ -15,22 +15,13 @@ export const typeDefs = gql`
     updated_at: String!
   }
 
-  type Role {
-    id: String!
-    user_id: String!
-    organization_id: String
-    role: String!
-    created_at: String!
-  }
-
   type User {
     id: ID!
     organization_id: String!
     email: String!
     is_active: String!
     organization: Organization
-    default_role: String!
-    user_roles: [Role!]!
+    role: String!
     created_at: String!
   }
 

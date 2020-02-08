@@ -1,8 +1,7 @@
-import uuidv4 from 'uuid/v4';
-import fetch from 'node-fetch';
 import dotEnvFlow from 'dotenv-flow';
 import gql from 'graphql-tag';
 import { print } from 'graphql/language/printer';
+import fetch from 'node-fetch';
 import { hasuraQuery } from '../../../hasura/client';
 
 dotEnvFlow.config({
@@ -24,7 +23,7 @@ test('createUser calls fetch with the right args and returns the user id', async
     },
   };
 
-  fetch.mockReturnValue(
+  (fetch as any).mockReturnValue(
     Promise.resolve(new Response(JSON.stringify(serverResponse))),
   );
 

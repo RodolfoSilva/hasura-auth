@@ -1,13 +1,12 @@
-import fetch from 'node-fetch';
-import memoize from 'lodash/memoize';
-import { print } from 'graphql/language/printer';
 import { DocumentNode } from 'graphql';
+import memoize from 'lodash/memoize';
+import createGraphqlClient from '../helpers/create-graphql-client';
 import * as vars from '../vars';
 
 const getDefaultHeaders = memoize(() => {
   const adminSecret = vars.hasuraGraphqlAdminSecret;
 
-  if (!adminSecret) {
+  if (!adminSecret && process.env.NODE_ENV === 'production') {
     throw Error(
       'The environment "HASURA_GRAPHQL_ADMIN_SECRET" has not provided',
     );
@@ -18,22 +17,14 @@ const getDefaultHeaders = memoize(() => {
   });
 });
 
-export const hasuraQuery = async <TVariables = any, TData = any>(
-  document: DocumentNode,
-  variables: TVariables,
-): Promise<TData> => {
-  const response = await fetch(vars.hasuraGraphqlEndpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
+export const hasuraQuery = <ResponseT = any, VariableT = any>(
+  document: DocumentNode | string,
+  variables: VariableT,
+) =>
+  createGraphqlClient<ResponseT, VariableT>(vars.hasuraGraphqlEndpoint)(
+    document,
+    variables,
+    {
       ...getDefaultHeaders(),
     },
-    body: JSON.stringify({
-      query: print(document),
-      variables,
-    }),
-  });
-
-  return response.json();
-};
+  );
