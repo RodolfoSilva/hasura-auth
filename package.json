@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node ./build/index.js",
     "start:dev": "cross-env DEBUG=App* NODE_ENV=development nodemon -L -e ts,graphql -x ts-node src/index.ts",
+    "start:test": "cross-env NODE_ENV=test ts-node src/index.ts",
     "build": "cross-env NODE_ENV=production rimraf build && tsc",
     "prepublish": "in-publish && yarn run lint && yarn run test && yarn run build || not-in-publish",
     "test": "jest --ci",

@@ -1,7 +1,0 @@
-- args:
-    definition:
-      forward_client_headers: true
-      headers: []
-      url: http://hasura-auth:4000/graphql
-    name: hasura-auth
-  type: add_remote_schema
