@@ -1,0 +1,4 @@
+- args:
+    cascade: false
+    sql: CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
+  type: run_sql

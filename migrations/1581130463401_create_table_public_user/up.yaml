@@ -1,0 +1,22 @@
+- args:
+    sql: CREATE EXTENSION IF NOT EXISTS pgcrypto;
+  type: run_sql
+- args:
+    sql: "CREATE TABLE \"public\".\"user\"(\"id\" uuid NOT NULL DEFAULT gen_random_uuid(),
+      \"organization_id\" uuid, \"email\" citext NOT NULL, \"password\" text NOT NULL,
+      \"is_active\" boolean NOT NULL DEFAULT false, \"role\" text NOT NULL DEFAULT
+      'user', \"created_at\" timestamptz NOT NULL DEFAULT now(), \"updated_at\" timestamptz
+      NOT NULL DEFAULT now(), PRIMARY KEY (\"id\") , FOREIGN KEY (\"organization_id\")
+      REFERENCES \"public\".\"organization\"(\"id\") ON UPDATE restrict ON DELETE
+      restrict, UNIQUE (\"organization_id\", \"email\"));\nCREATE OR REPLACE FUNCTION
+      \"public\".\"set_current_timestamp_updated_at\"()\nRETURNS TRIGGER AS $$\nDECLARE\n
+      \ _new record;\nBEGIN\n  _new := NEW;\n  _new.\"updated_at\" = NOW();\n  RETURN
+      _new;\nEND;\n$$ LANGUAGE plpgsql;\nCREATE TRIGGER \"set_public_user_updated_at\"\nBEFORE
+      UPDATE ON \"public\".\"user\"\nFOR EACH ROW\nEXECUTE PROCEDURE \"public\".\"set_current_timestamp_updated_at\"();\nCOMMENT
+      ON TRIGGER \"set_public_user_updated_at\" ON \"public\".\"user\" \nIS 'trigger
+      to set value of column \"updated_at\" to current timestamp on row update';\n"
+  type: run_sql
+- args:
+    name: user
+    schema: public
+  type: add_existing_table_or_view

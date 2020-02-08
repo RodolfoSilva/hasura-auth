@@ -1,0 +1,24 @@
+- args:
+    relationship: users
+    table:
+      name: organization
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: user
+    table:
+      name: session
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: organization
+    table:
+      name: user
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: sessions
+    table:
+      name: user
+      schema: public
+  type: drop_relationship

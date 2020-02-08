@@ -1,0 +1,40 @@
+- args:
+    name: users
+    table:
+      name: organization
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: organization_id
+        table:
+          name: user
+          schema: public
+  type: create_array_relationship
+- args:
+    name: user
+    table:
+      name: session
+      schema: public
+    using:
+      foreign_key_constraint_on: user_id
+  type: create_object_relationship
+- args:
+    name: organization
+    table:
+      name: user
+      schema: public
+    using:
+      foreign_key_constraint_on: organization_id
+  type: create_object_relationship
+- args:
+    name: sessions
+    table:
+      name: user
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: session
+          schema: public
+  type: create_array_relationship

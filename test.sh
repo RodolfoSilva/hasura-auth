@@ -57,7 +57,7 @@ docker run \
   --rm \
   --link "${postgres_container}:postgres" \
   -e HASURA_GRAPHQL_DATABASE_URL=postgres://postgres:@postgres:5432/${database_name} \
-  -v "$(pwd)/examples/with-docker-compose/migrations":/tmp/hasura-test/migrations \
+  -v "$(pwd)/migrations":/tmp/hasura-test/migrations \
   --name ${hasura_container} \
   --network ${network_name} \
   hasura/graphql-engine:${hasura_version}.cli-migrations > /dev/null 2>&1
