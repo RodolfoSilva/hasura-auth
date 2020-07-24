@@ -24,7 +24,7 @@ test('createUser calls fetch with the right args and returns the user id', async
     },
   };
 
-  fetch.mockReturnValue(
+  (fetch as any).mockReturnValue(
     Promise.resolve(new Response(JSON.stringify(serverResponse))),
   );
 

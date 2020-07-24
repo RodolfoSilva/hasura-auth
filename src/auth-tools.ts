@@ -5,7 +5,7 @@ import * as vars from './vars';
 
 export const generateJwtAccessToken = (payload: any) => {
   const jwtOptions: jwt.SignOptions = {
-    algorithm: vars.jwtAlgorithm,
+    algorithm: vars.jwtAlgorithm as jwt.Algorithm,
     expiresIn: vars.jwtTokenExpiresIn,
   };
 
@@ -14,7 +14,7 @@ export const generateJwtAccessToken = (payload: any) => {
 
 export const generateJwtRefreshToken = (payload: any) => {
   const jwtOptions: jwt.SignOptions = {
-    algorithm: vars.jwtAlgorithm,
+    algorithm: vars.jwtAlgorithm as jwt.Algorithm,
     expiresIn: vars.jwtRefreshTokenExpiresIn,
   };
 
