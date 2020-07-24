@@ -68,10 +68,10 @@ const checkUserCanDoRegistration = (req: Request): boolean => {
   return true;
 };
 
-const checkUserIsPartOfStaffOrIsTheCurrentUser = (
+const checkUserIsPartOfStaffOrIsTheCurrentUser = async (
   req: Request,
   user: User,
-): boolean => {
+): Promise<boolean> => {
   if (isAdmin(req)) {
     return true;
   }
@@ -84,7 +84,7 @@ const checkUserIsPartOfStaffOrIsTheCurrentUser = (
 
   if (
     getIntersection(roles, ['admin']).length >= 1 ||
-    isUserAllowedToChangePassword(currentUserId, user, req)
+    (await isUserAllowedToChangePassword(currentUserId, user, req))
   ) {
     return true;
   }
