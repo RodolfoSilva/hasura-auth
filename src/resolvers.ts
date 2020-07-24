@@ -15,6 +15,7 @@ import {
   getUserByRefreshToken,
   getUserByCredentials,
 } from './hasura';
+import { isUserAllowedToChangePassword } from './custom-logic';
 
 const getRole = (req: Request) =>
   getIn(req, `headers["${vars.hasuraHeaderPrefix}role"]`, '');
@@ -69,7 +70,7 @@ const checkUserCanDoRegistration = (req: Request): boolean => {
 
 const checkUserIsPartOfStaffOrIsTheCurrentUser = (
   req: Request,
-  userId: string,
+  user: User,
 ): boolean => {
   if (isAdmin(req)) {
     return true;
@@ -79,7 +80,12 @@ const checkUserIsPartOfStaffOrIsTheCurrentUser = (
     .split(',')
     .map((role: string) => role.trim());
 
-  if (getIntersection(roles, ['admin']).length >= 1) {
+  const currentUserId = getCurrentUserId(req);
+
+  if (
+    getIntersection(roles, ['admin']).length >= 1 ||
+    isUserAllowedToChangePassword(currentUserId, user, req)
+  ) {
     return true;
   }
 
@@ -87,12 +93,7 @@ const checkUserIsPartOfStaffOrIsTheCurrentUser = (
     return false;
   }
 
-  try {
-    const currentUserId = getCurrentUserId(req);
-    return currentUserId === userId;
-  } catch (e) {
-    return false;
-  }
+  return currentUserId === user.id;
 };
 
 const resolvers = {
@@ -163,14 +164,14 @@ const resolvers = {
       };
     },
     async auth_change_password(_, { user_id, new_password }, ctx) {
-      if (!checkUserIsPartOfStaffOrIsTheCurrentUser(ctx.req, user_id)) {
-        throw new Error('Forbidden');
-      }
-
       const user: User | undefined = await getUserById(user_id);
 
       if (!user) {
         throw new Error('Unable to find user');
+      }
+
+      if (!(await checkUserIsPartOfStaffOrIsTheCurrentUser(ctx.req, user))) {
+        throw new Error('Forbidden');
       }
 
       const result = await changeUserPassword(user, new_password);
